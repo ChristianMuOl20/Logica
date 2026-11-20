@@ -1,0 +1,182 @@
+import numpy as np
+
+# Diccionario de coordenadas aproximadas (X, Y) para dar una distribución realista al mapa del Metro CDMX
+# Basado en la geografía relativa de las terminales y transbordos clave
+coordenadas_metro = {
+    # Línea 1
+    "Observatorio": (-4, -1),
+    "Tacubaya": (-3, -1),
+    "Balderas": (-1, 0),
+    "Pino Suarez": (1, 0),
+    "Candelaria": (2, 1),
+    "San Lazaro": (3, 2),
+    "Pantitlan": (6, 2),
+    # Línea 2 adicionales
+    "Cuatro Caminos": (-4, 3),
+    "Hidalgo": (-1, 2),
+    "Bellas Artes": (0, 2),
+    "Chabacano": (1, -2),
+    "Tasbaqueña": (1, -6),
+    # Línea 3 adicionales
+    "Indios Verdes": (-1, 6),
+    "La Raza": (-1, 4),
+    "Centro Médico": (-1, -2),
+    "Zapata": (-1, -4),
+    "Universidad": (-1, -7),
+    # Línea 4 adicionales
+    "Martín Carrera": (2, 5),
+    "Talismán": (2, 4),
+    "Consulado": (2, 3),
+    "Canal del Norte": (2, 2),
+    "Morelos": (2, 1.5),
+    "Fray Servando": (2, 0),
+    "Jamaica": (2, -2),
+    "Santa Anita": (2, -3),
+    # Línea 5 adicionales
+    "Politécnico": (-2, 5),
+    "Instituto del Petróleo": (-2, 4),
+    "Autobuses del Norte": (-1.5, 4),
+    "Misterios": (0, 3.5),
+    "Valle Gómez": (1, 3),
+    "Terminal Aérea": (4, 3),
+    "Hangares": (5, 2.5),
+    # Línea 6 adicionales
+    "El Rosario": (-4, 5),
+    "Tezozómoc": (-3.5, 5),
+    "UAM-Azcapotzalco": (-3, 5),
+    "Ferrería/Arena Ciudad de México": (-2.5, 5),
+    "Norte 45": (-2.2, 5),
+    "Vallejo": (-2.1, 5),
+    "Lindavista": (-1.5, 5),
+    "Deportivo 18 de Marzo": (0.5, 5),
+    # Línea 7 adicionales
+    "Aquiles Serdán": (-4, 4),
+    "Camarones": (-4, 3),
+    "Tacuba": (-4, 2),
+    "San Joaquín": (-4, 1),
+    "Polanco": (-4, 0),
+    "Auditorio": (-4, -0.5),
+    "Constituyentes": (-3.5, -0.5),
+    "San Pedro de los Pinos": (-3, -2),
+    "San Antonio": (-3, -3),
+    "Mixcoac": (-3, -4),
+    "Barranca del Muerto": (-3, -5),
+    # Línea 8 adicionales
+    "Garibaldi/Lagunilla": (0, 3),
+    "San Juan de Letrán": (0, 1),
+    "Salto del Agua": (0, 0),
+    "Doctores": (0, -1),
+    "Obrera": (0, -1.5),
+    "La Viga": (1.5, -2.5),
+    "Coyuya": (3, -3),
+    "Iztacalco": (3.5, -3.5),
+    "Apatlaco": (4, -4),
+    "Aculco": (4.5, -4.5),
+    "Escuadrón 201": (5, -5),
+    "Atlalilco": (4, -6),
+    "Iztapalapa": (5, -6),
+    "Cerro de la Estrella": (5.5, -6),
+    "UAM-I": (6, -6),
+    "Constitución de 1917": (7, -6),
+    # Línea 9 adicionales
+    "Patriotismo": (-2.5, -1.5),
+    "Chilpancingo": (-2, -1.8),
+    "Lázaro Cárdenas": (0.5, -2),
+    "Mixiuhca": (3, -2),
+    "Velódromo": (4, -1),
+    "Ciudad Deportiva": (4.5, -0.5),
+    "Puebla": (5, 1),
+    # Línea A adicionales
+    "Pantitlán": (6, 2),
+    "Agrícola Oriental": (6.5, 1.5),
+    "Canal de San Juan": (7, 1),
+    "Tepalcates": (7.5, 0.5),
+    "Guelatao": (8, 0),
+    "Peñón Viejo": (8.5, -0.5),
+    "Acatitla": (9, -1),
+    "Santa Marta": (9.5, -1.5),
+    "Los Reyes": (10, -2),
+    "La Paz": (10.5, -2.5),
+    # Línea B adicionales
+    "Buenavista": (-2, 2.5),
+    "Guerrero": (-1.5, 2.5),
+    "Lagunilla": (0.5, 2.8),
+    "Tepito": (1, 2.5),
+    "San Lázaro": (3, 2),
+    "Ricardo Flores Magón": (3.5, 3.5),
+    "Romero Rubio": (4, 4),
+    "Oceanía": (4.5, 4.5),
+    "Deportivo Oceanía": (5, 5),
+    "Bosque de Aragón": (5.5, 5.5),
+    "Villa de Aragón": (6, 6),
+    "Nezahualcóyotl": (6.5, 6.5),
+    "Impulsora": (7, 7),
+    "Río de los Remedios": (7.5, 7.5),
+    "Múzquiz": (8, 8),
+    "Ecatepec": (8.5, 8.5),
+    "Olímpica": (9, 9),
+    "Plaza Aragón": (9.5, 9.5),
+    "Ciudad Azteca": (10, 10),
+    # Línea 12 adicionales
+    "Insurgentes Sur": (-2.5, -4),
+    "Hospital 20 de Noviembre": (-2, -4),
+    "Parque de los Venados": (-0.5, -4),
+    "Eje Central": (0, -4),
+    "Ermita": (1, -4),
+    "Mexicaltzingo": (2.5, -4),
+    "Culhuacán": (3, -5),
+    "San Andrés Tomatlán": (3.5, -5.5),
+    "Lomas de Estrella": (4, -6.5),
+    "Calle 11": (4.5, -7),
+    "Periférico Oriente": (5, -7.5),
+    "Tezonco": (5.5, -8),
+    "Olivos": (6, -8.5),
+    "Nopalera": (6.5, -9),
+    "Zapotitlán": (7, -9.5),
+    "Tlaltenco": (7.5, -10),
+    "Tláhuac": (8, -10.5)
+}
+
+# Para cualquier estación que no hayamos mapeado explícitamente, le asignamos una posición aleatoria controlada
+pos_final = {}
+for nodo in metro_cdmx.nodes():
+    if nodo in coordenadas_metro:
+        pos_final[nodo] = np.array(coordenadas_metro[nodo])
+    else:
+        pos_final[nodo] = np.random.rand(2) * 10 - 5
+def encontrar_y_graficar_ruta(origen, destino):
+    if origen not in metro_cdmx or destino not in metro_cdmx:
+        print("Una o ambas estaciones no existen en el mapa.")
+        return
+
+    # Calcular el camino más corto usando el algoritmo de Dijkstra (peso por defecto = 1 en cada arista)
+    camino = nx.dijkstra_path(metro_cdmx, source=origen, target=destino)
+    print(f"Ruta más corta desde {origen} a {destino}:")
+    print(" -> ".join(camino))
+
+    # Crear lista de aristas que componen el camino
+    aristas_camino = list(zip(camino[:-1], camino[1:]))
+
+    # Graficar
+    plt.figure(figsize=(18, 18))
+
+    # Dibujar todos los nodos y aristas del fondo en colores tenues
+    nx.draw_networkx_nodes(metro_cdmx, pos_final, node_color="lightgray", node_size=150, alpha=0.6)
+    nx.draw_networkx_edges(metro_cdmx, pos_final, edge_color="lightgray", alpha=0.5, width=1.0)
+
+    # Resaltar las estaciones del camino
+    nx.draw_networkx_nodes(metro_cdmx, pos_final, nodelist=camino, node_color="red", node_size=250, alpha=0.9)
+    # Resaltar las conexiones del camino
+    nx.draw_networkx_edges(metro_cdmx, pos_final, edgelist=aristas_camino, edge_color="darkred", width=3.5)
+
+    # Mostrar etiquetas solo de las estaciones de la ruta para no saturar
+    etiquetas_filtradas = {nodo: nodo for nodo in camino}
+    nx.draw_networkx_labels(metro_cdmx, pos_final, labels=etiquetas_filtradas, font_size=9, font_weight="bold", verticalalignment="bottom")
+
+    plt.title(f"Dijkstra: Ruta de {origen} a {destino}", fontsize=16, fontweight='bold')
+    plt.axis('off')
+    plt.show()
+
+
+# Ejemplo de uso:
+encontrar_y_graficar_ruta("La Paz", "Universidad")
